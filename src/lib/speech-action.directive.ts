@@ -1,0 +1,44 @@
+import { Directive, Input, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+
+import { SpeechService } from './speech.service';
+
+@Directive({
+    selector: '[ngSpeechAction]'
+})
+export class SpeechActionDirective implements OnDestroy, OnInit {
+    @Input() public ngSpeechAction: any;
+    @Input() public ngSpeechActionCommand?: string;
+    @Input() public ngSpeechActionContext?: string[] = [];
+
+    private _destroyed = new Subject<void>();
+
+    constructor(
+        private _view: ViewContainerRef,
+        public speech: SpeechService,
+    ) { }
+
+    public ngOnInit(): void {
+        this.speech.declareCommand(this.ngSpeechActionCommand, this.ngSpeechActionContext);
+        this.speech.command.pipe(
+            takeUntil(this._destroyed),
+            filter(command => this.match(command))
+        ).subscribe(
+            _command => {
+                const component = (<any>this._view.injector).view?.component;
+                this.ngSpeechAction.bind(component)();
+            }
+        );
+    }
+
+    public ngOnDestroy(): void {
+        this._destroyed.next();
+        this._destroyed.complete();
+    }
+
+    private match(command: any): boolean {
+        const context = (this.ngSpeechActionContext || []).map(w => w.toLowerCase()).join('/');
+        return command.context === context && !!this.ngSpeechActionCommand && command.command === this.ngSpeechActionCommand.toLowerCase();
+    }
+}

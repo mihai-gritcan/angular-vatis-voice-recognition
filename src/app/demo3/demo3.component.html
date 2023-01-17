@@ -1,0 +1,59 @@
+<p> Use [TAB] to navigate between inputs </p>
+<p> Each input when captures the focus fires an event. See console.log when navigate </p>
+<br/>
+
+<form [formGroup]="demo3Form" (ngSubmit)="onSubmit()">
+	<div class="row">
+		<div class="column">
+			<label for="start">Data început: </label>
+			<input autofocus tabindex="1" id="start" type="text" formControlName="start" (focus)="onFocusCapture('start')"
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		
+			<label for="bases">Baza: </label>
+			<input id="bases" type="text" formControlName="bases">
+
+			<label for="serie">Serie: </label>
+			<input id="serie" tabindex="4" type="text" formControlName="serie" (focus)="onFocusCapture('serie')" 
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+	
+			<label for="prescriptionPlace">Loc prescriere: </label>
+			<input id="prescriptionPlace" tabindex="7" type="text" formControlName="prescriptionPlace" (focus)="onFocusCapture('prescriptionPlace')" 
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		</div>
+
+		<div class="column">
+			<label for="end">Data sfârșit: </label>
+			<input id="end" tabindex="2" type="text" formControlName="end" (focus)="onFocusCapture('end')" 
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+			
+			<label for="days">Zile: </label>
+			<input id="days" type="text" formControlName="days">
+
+			<label for="documentDate">Din data: </label>
+			<input id="documentDate" tabindex="5" type="text" formControlName="documentDate" (focus)="onFocusCapture('documentDate')" 
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+
+			<label for="documentNumber">Nr. aviz expert: </label>
+			<input id="documentNumber" tabindex="8" type="text" formControlName="documentNumber" (focus)="onFocusCapture('documentNumber')" 
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		</div>
+
+		<div class="column">
+			<label for="continueFrom">Continuare din: </label>
+			<input id="continueFrom" tabindex="3" type="text" formControlName="continueFrom" (focus)="onFocusCapture('continueFrom')" 
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+			
+			<label for="dailyAverage">Media zilnica: </label>
+			<input id="dailyAverage" type="text" formControlName="dailyAverage">
+
+			<label for="diagCode">Cod diagnostic: </label>
+			<input id="diagCode" tabindex="6" type="text" formControlName="diagCode" (focus)="onFocusCapture('diagCode')" 
+					(keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		</div>
+
+	</div>
+  
+ 
+  <button type="submit" tabindex="7" [disabled]="!demo3Form.valid">Submit</button>
+</form>
+
