@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { Demo3Component } from './demo3/demo3.component';
+import { DemoVatisComponent } from './demo-vatis/demo-vatis.component';
 
 const routes: Routes = [
-  { path: 'demo3', component: Demo3Component },
+  { path: 'demo3', component: DemoVatisComponent },
 ];
 
 @NgModule({

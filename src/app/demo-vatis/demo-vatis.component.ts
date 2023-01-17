@@ -20,10 +20,10 @@ const Socket_IOClient_Generator_Destroy = '@vatis-tech/asr-client-js: Destroy th
 
 @Component({
   selector: 'app-demo3',
-  templateUrl: './demo3.component.html',
-  styleUrls: ['./demo3.component.scss']
+  templateUrl: './demo-vatis.component.html',
+  styleUrls: ['./demo-vatis.component.scss']
 })
-export class Demo3Component {
+export class DemoVatisComponent {
   private vtcInstance?: VTC = undefined;
 
   private recState = {

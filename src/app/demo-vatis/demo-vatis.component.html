@@ -1,8 +1,11 @@
+<h4> Open browser console and monitor it while playing with the app </h4>
 <p> Use [TAB] to navigate between inputs </p>
-<p> Each input when captures the focus fires an event which should automatically init the VTC client which will start the transcript. See console.log when navigate </p>
+<h4> When the focus is captured by the input, press on [CTRL] key to start the transcript (in back we'll init the VTC client which will do the transcript). Observe the console.log</h4>
+<p> Each input when captures the focus fires an event. See console.log when navigate to observe the name of capturec input </p>
+
 <br/>
 
-<form [formGroup]="demo3Form" (ngSubmit)="onSubmit()">
+<form [formGroup]="demoForm" (ngSubmit)="onSubmit()">
 	<div class="row">
 		<div class="column">
 			<label for="start">Data început: </label>

@@ -6,12 +6,12 @@ import { SpeechModule } from '../lib';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { Demo3Component } from './demo3/demo3.component';
+import { DemoVatisComponent } from './demo-vatis/demo-vatis.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    Demo3Component,
+    DemoVatisComponent,
   ],
   imports: [
     BrowserModule,
