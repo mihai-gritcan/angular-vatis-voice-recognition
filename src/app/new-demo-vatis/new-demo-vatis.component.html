@@ -1,0 +1,56 @@
+<h4> Press [Start rec] button when want to start filling the form and [Stop rec] when finish</h4>
+
+<h4>You can navigate between fields with [Tab] keyboard or with voice commands </h4>
+<p>Say: <strong>"mai departe"</strong> or <strong>"următorul"</strong> to move to Next field</p>
+<p>Say: <strong>"înapoi"</strong> or <strong>"precedentul"</strong> to move to Previous field</p>
+
+<button type="button" [disabled]="!this.canStart" (click)="onStartRec()">Start rec</button>
+<button type="button" [disabled]="!this.canStop" (click)="onStopRec()">Stop rec</button>
+<br/>
+
+<form [formGroup]="demoForm" (ngSubmit)="onSubmit()">
+	<div class="row">
+		<div class="column">
+			<label for="start">Data început: </label>
+			<input id="start" #start tabindex="1" type="text" formControlName="start" (focus)="onFocusCapture($event)">
+		
+			<label for="bases">Baza: </label>
+			<input id="bases" type="text" formControlName="bases">
+
+			<label for="serie">Serie: </label>
+			<input id="serie" #serie tabindex="4" type="text" formControlName="serie" (focus)="onFocusCapture($event)">
+	
+			<label for="prescriptionPlace">Loc prescriere: </label>
+			<input id="prescriptionPlace" #prescriptionPlace tabindex="7" type="text" formControlName="prescriptionPlace" (focus)="onFocusCapture($event)" >
+		</div>
+
+		<div class="column">
+			<label for="end">Data sfârșit: </label>
+			<input id="end" #end tabindex="2" type="text" formControlName="end" (focus)="onFocusCapture($event)">
+			
+			<label for="days">Zile: </label>
+			<input id="days" type="text" formControlName="days">
+
+			<label for="documentDate">Din data: </label>
+			<input id="documentDate" #documentDate tabindex="5" type="text" formControlName="documentDate" (focus)="onFocusCapture($event)">
+
+			<label for="documentNumber">Nr. aviz expert: </label>
+			<input id="documentNumber" #documentNumber tabindex="8" type="text" formControlName="documentNumber" (focus)="onFocusCapture($event)">
+		</div>
+
+		<div class="column">
+			<label for="continueFrom">Continuare din: </label>
+			<input id="continueFrom" #continueFrom tabindex="3" type="text" formControlName="continueFrom" (focus)="onFocusCapture($event)">
+			
+			<label for="dailyAverage">Media zilnica: </label>
+			<input id="dailyAverage" type="text" formControlName="dailyAverage">
+
+			<label for="diagCode">Cod diagnostic: </label>
+			<input id="diagCode" #diagCode tabindex="6" type="text" formControlName="diagCode" (focus)="onFocusCapture($event)" >
+		</div>
+
+	</div>
+ 
+  <button type="submit" tabindex="9">Submit</button>
+</form>
+

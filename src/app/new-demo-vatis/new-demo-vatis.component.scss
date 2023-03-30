@@ -1,0 +1,42 @@
+form {
+  padding-top: 1rem;
+}
+
+label {
+  display: block;
+  margin: .5em 0;
+  font-weight: bold;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 33%;
+  padding: 10px;
+  height: auto;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.start-rec {
+  background-color: green;
+}
+
+.start-rec:hover {
+  background-color: lightgreen;
+}
+
+.stop-rec {
+  background-color: red;
+}
+
+.stop-rec:hover {
+  background-color: lightcoral;
+}

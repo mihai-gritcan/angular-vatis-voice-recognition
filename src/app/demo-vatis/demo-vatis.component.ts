@@ -12,7 +12,7 @@ const VTC_FRAME_OVERLAP = 1.0;
 const VTC_BUFFER_OFFSET = 0.5;
 const NO_INSTANCES_AVAILABLE_ERROR_CODE = 429;
 const NO_INSTANCES_AVAILABLE_ERROR_MESSAGE = "No instance available";
-const VTC_API_JWT_KEY = "";
+const VTC_API_JWT_KEY = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJWYXRpcyBUZWNoIiwiaWF0IjoxNjY5MzY2OTczLCJzdWIiOiJhZHJpYW4uZ3J1aWFuQHVjbXMucm8iLCJhdXRoIjoiQVBJX0tFWSIsImV4cCI6NDgyNTA0MDU3M30.AfdburVDf10ybkqzeu0brM-Kmo3EOCwtTxpTxwBZPkkcH3wl5hFmFwM_48TD9owBO2oFK90k2R1xpL7Uas6fPw";
 const VTC_HOST = "https://vatis.tech/api/v1";
 
 const Microfone_Generator_Initialized = '@vatis-tech/asr-client-js: Initialized the "MicrophoneGenerator" plugin.';

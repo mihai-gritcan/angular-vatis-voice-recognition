@@ -21,7 +21,7 @@
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0",
-    "@vatis-tech/asr-client-js": "^1.4.1"
+    "@vatis-tech/asr-client-js": "^2.0.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.0.1",
