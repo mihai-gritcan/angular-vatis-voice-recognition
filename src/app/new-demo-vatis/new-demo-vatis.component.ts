@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, Renderer2, ViewChildren } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 // @ts-ignore
 import VTC from "@vatis-tech/asr-client-js";
 
@@ -27,6 +28,8 @@ const VTC_CUSTOM_COMMANDS = {
 
 @Component({
   selector: 'app-new-demo',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './new-demo-vatis.component.html',
   styleUrls: ['./new-demo-vatis.component.scss']
 })
