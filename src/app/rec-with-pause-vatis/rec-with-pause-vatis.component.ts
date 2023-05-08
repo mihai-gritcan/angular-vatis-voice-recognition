@@ -140,7 +140,7 @@ export class RecWithPauseVatisComponent implements OnInit, AfterViewInit, OnDest
     }
   }
 
-  private onStartRec() {
+  public onStartRec() {
     // this.setFocusInFirstInput();
     this.toggleRec();
   }
