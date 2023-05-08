@@ -17,8 +17,9 @@ const NO_INSTANCES_AVAILABLE_ERROR_MESSAGE = "No instance available";
 const VTC_API_JWT_KEY = environment.vtcApiJwtKey;
 const VTC_HOST = "https://vatis.tech/api/v1";
 
-const Microfone_Generator_Initialized = '@vatis-tech/asr-client-js: Initialized the "MicrophoneGenerator" plugin.';
-const Socket_IOClient_Generator_Destroy = '@vatis-tech/asr-client-js: Destroy the "SocketIOClientGenerator" plugin.';
+const SocketIOClientGenerator_Initialized = '@vatis-tech/asr-client-js: Initialized the "SocketIOClientGenerator" plugin.';
+const MicrofoneGenerator_Initialized = '@vatis-tech/asr-client-js: Initialized the "MicrophoneGenerator" plugin.';
+const SocketIOClientGenerator_Destroy = '@vatis-tech/asr-client-js: Destroy the "SocketIOClientGenerator" plugin.';
 
 const VTC_CUSTOM_COMMANDS = {
   spokenCommandsList: [
@@ -31,10 +32,10 @@ const VTC_CUSTOM_COMMANDS = {
   selector: 'app-new-demo',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './new-demo-vatis.component.html',
-  styleUrls: ['./new-demo-vatis.component.scss']
+  templateUrl: './rec-with-pause-vatis.component.html',
+  styleUrls: ['./rec-with-pause-vatis.component.scss']
 })
-export class NewDemoVatisComponent implements OnInit, AfterViewInit, OnDestroy {
+export class RecWithPauseVatisComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('start, end, continueFrom, serie, documentDate, diagCode, prescriptionPlace, documentNumber') inputElements!: QueryList<ElementRef>;
 
   public demoForm = this.fb.group({
@@ -51,28 +52,62 @@ export class NewDemoVatisComponent implements OnInit, AfterViewInit, OnDestroy {
     documentNumber: [''],
   });
 
-  public get canStart() { return !this._recState.canPlay; }
+  public get canStart() { return !this.getVtcRecState.canPlay; }
 
-  public get canStop() { return this._recState.canPlay; }
+  public get canStopRec() { return this.getVtcRecState.canPlay; }
+
+  public errorReason = '';
+  public get micCanListen() { return this.getVtcRecState.vtcInitialized; }
+  public get micIsInPause() { return this.getVtcRecState.vtcInitialized && !this._isControlKeyPressed; }
+  public get micIsListening() { return this.getVtcRecState.vtcInitialized && this._isControlKeyPressed; }
+
+  private _isRecStoppedByUser = false;
+
+  private _isControlKeyPressed: boolean = false;
 
   private _vtcInstance?: VTC = undefined;
 
-  private _recState = { vtcInitialized: false, canPlay: false, error: false, isDestroying: false };
+  private _vtcRecState = { vtcInitialized: false, canPlay: false, error: false, isDestroying: false };
+
+  private get getVtcRecState() { return this._vtcRecState; }
+
+  private setVtcRecState(args: { vtcInitialized?: boolean, canPlay?: boolean, error?: boolean, isDestroying?: boolean }) {
+    if (args?.vtcInitialized !== undefined) this._vtcRecState.vtcInitialized = args.vtcInitialized;
+    if (args?.canPlay !== undefined) this._vtcRecState.canPlay = args.canPlay;
+    if (args?.isDestroying !== undefined) this._vtcRecState.isDestroying = args.isDestroying;
+
+    if (args?.error !== undefined) {
+      this._vtcRecState.error = args.error;
+    } else {
+      this.errorReason = !this._isRecStoppedByUser ? '' : this.errorReason;
+    }
+
+    // TODO: another way to handle when the socket is initialized doesn't exist yet. So we will rely on the message pushed through the logger
+    // TODO: we need a callback called 'ready' to handle it immediately after initialization to call the pause method
+    if (args?.vtcInitialized === true) {
+      console.log('AUTO-PAUSE VTC INSTANCE RECORDING');
+      this._vtcInstance.pause();
+    }
+  }
 
   private _currentFocusedInput: ElementRef | undefined = undefined;
   private _orderedInputElements: ElementRef[] = [];
 
   constructor(private fb: FormBuilder, private renderer: Renderer2) { }
 
-  public ngOnInit(): void { }
+  public ngOnInit(): void {
+    this.onStartRec();
+  }
 
   public ngAfterViewInit(): void {
     const elementsArray = this.inputElements.toArray();
     this._orderedInputElements = elementsArray.sort((a, b) => a.nativeElement.getAttribute('tabIndex') - b.nativeElement.getAttribute('tabIndex'));
+
+    this.setFocusInFirstInput();
   }
 
   public ngOnDestroy(): void {
-    if (this._vtcInstance && !this._recState.isDestroying) {
+    if (this._vtcInstance && !this.getVtcRecState.isDestroying) {
       this._vtcInstance.destroy();
     }
   }
@@ -89,28 +124,46 @@ export class NewDemoVatisComponent implements OnInit, AfterViewInit, OnDestroy {
     this._currentFocusedInput = curentFocusedInput;
   }
 
+  public onKeyDown(event: any) {
+    if (!this._isControlKeyPressed) {
+      this._isControlKeyPressed = true;
+
+      this._vtcInstance?.resume();
+    }
+  }
+
+  public onKeyUp(event: any) {
+    if (this._isControlKeyPressed) {
+      this._isControlKeyPressed = false;
+
+      this._vtcInstance?.pause();
+    }
+  }
+
   public onStartRec() {
+    // this.setFocusInFirstInput();
+    this.toggleRec();
+  }
+
+  private setFocusInFirstInput() {
     const firstFocusedInput = this.inputElements.find(el => el.nativeElement.getAttribute('formControlName') === 'start')!;
     this.renderer.selectRootElement(firstFocusedInput.nativeElement).focus();
-
-    this.toggleRec();
   }
 
   public onStopRec() {
     this.toggleRec();
+    this._isRecStoppedByUser = true;
+    this.errorReason = 'stopped by user';
   }
 
   private toggleRec() {
-    if (this._recState.isDestroying) return;
+    if (this.getVtcRecState.isDestroying) return;
 
     if (!this._vtcInstance) {
-      this._recState.canPlay = true;
       this.initializeVtcInstance();
-
-    } else if (this._vtcInstance !== undefined && this._recState.canPlay) {
-      this._recState.canPlay = false;
-      this._recState.isDestroying = true;
-
+      this.setVtcRecState({ canPlay: true });
+    } else if (this._vtcInstance !== undefined && this.getVtcRecState.canPlay) {
+      this.setVtcRecState({ canPlay: false, isDestroying: true });
       this._vtcInstance.destroy();
     }
   }
@@ -132,8 +185,8 @@ export class NewDemoVatisComponent implements OnInit, AfterViewInit, OnDestroy {
       onData: (data: any) => this.onData(data),
       onCommandData: (commandData: any) => this.onCommandData(commandData),
       errorHandler: (err: any) => this.onHandleError(err),
-      logger: (info: any) => this.onLogError(info),
-      onDestroyCallback: () => this.onDestroy(),
+      logger: (info: any) => this.onLog(info),
+      onDestroyCallback: () => this.onDestroy()
     });
   }
 
@@ -166,35 +219,37 @@ export class NewDemoVatisComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onHandleError(e: any) {
-    this._recState.canPlay = false;
-    this._recState.vtcInitialized = false;
-    this._recState.error = true;
+    this.setVtcRecState({ error: true, vtcInitialized: false, canPlay: false });
 
     this._vtcInstance = undefined;
 
     if (e && (e.status === NO_INSTANCES_AVAILABLE_ERROR_CODE || e.message === NO_INSTANCES_AVAILABLE_ERROR_MESSAGE)) {
       console.warn("#ERROR: We're sorry, but there are no instances of the Vatis Tech ASR SERVICE free. Please try again later. If you should have one, please contact us at support@vatis.tech.");
+      this.errorReason = 'No instances of the Vatis Tech ASR SERVICE free';
     } else {
       console.warn("#ERROR: There was a server error. Please try again later, and if this issue persists, please contact us at support@vatis.tech.");
+      this.errorReason = 'vatis.tech server error';
     }
   }
 
-  private onLogError(info: any) {
-    if (info.currentState === Microfone_Generator_Initialized) {
-      this._recState.vtcInitialized = true;
-    } else if (info.currentState === Socket_IOClient_Generator_Destroy && this._recState.vtcInitialized && this._recState.canPlay) {
-      this._recState.canPlay = false;
-      this._recState.vtcInitialized = false;
-      this._recState.error = true;
+  private onLog(info: any) {
+    if (info.currentState === SocketIOClientGenerator_Initialized) {
+      /* handle when the socket is initialized. Note: that does not mean that the MicrophoneGenerator is initilized also */
+    }
+    else if (info.currentState === MicrofoneGenerator_Initialized) {
+      this.setVtcRecState({ vtcInitialized: true });
+    } else if (info.currentState === SocketIOClientGenerator_Destroy && this.getVtcRecState.vtcInitialized && this.getVtcRecState.canPlay) {
+      this.setVtcRecState({ vtcInitialized: false, canPlay: false, error: true });
+
       this._vtcInstance = null;
       console.warn("#INFO: The Vatis Tech ASR SERVICE has interrupted the connection. Please try again in a few minutes, and if this issue persists, please contact us at support@vatis.tech.");
     }
   }
 
   private onDestroy() {
-    if (this._recState.isDestroying && !this._recState.error) {
-      this._recState.vtcInitialized = false;
-      this._recState.isDestroying = false;
+    if (this.getVtcRecState.isDestroying && !this.getVtcRecState.error) {
+      this.setVtcRecState({ vtcInitialized: false, isDestroying: false });
+
       this._vtcInstance = null;
     }
   }

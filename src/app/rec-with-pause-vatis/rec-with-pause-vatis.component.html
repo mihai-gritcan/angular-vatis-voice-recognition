@@ -1,0 +1,81 @@
+<h4> The recording will occur just when the [Ctrl] key is pressed </h4>
+
+<h4>You can navigate between fields with [Tab] keyboard or click in the desired input </h4>
+<p>Note: an instance of audio recording will be created when the form is initialized, but it will stay paused until a focus will be captured inside an input and the [Ctrl] key will be pressed</p>
+
+<button type="button" [disabled]="!this.canStart" (click)="onStartRec()">Start rec</button>
+<button type="button" [disabled]="!this.canStopRec" (click)="onStopRec()">Stop rec</button>
+<br/>
+
+<div>
+	<section>
+		<strong> Mic state: </strong>
+		<div *ngIf="micCanListen">
+			<span title="Mic is initialized" class="material-symbols-outlined">mic</span>
+			<span><i>(ready to rec)</i></span>
+		</div>
+		<div *ngIf="!micCanListen">
+			<span title="Mic is not initialized" class="material-symbols-outlined">mic_off</span>
+			<span><i>(not ready to rec) <strong>{{errorReason}}</strong></i></span>
+		</div>
+	</section>
+
+	<section *ngIf="micIsListening || micIsInPause">
+		<strong> Recording state: </strong>
+		<div *ngIf="micIsListening">
+			<span title="Mic is recording" class="material-symbols-outlined">speech_to_text</span>
+			<span><i>(recording)</i></span>
+		</div>
+		<div *ngIf="micIsInPause">
+			<span title="Mic is waiting to record" class="material-symbols-outlined">settings_voice</span>
+			<span><i>(pause)</i></span>
+		</div>
+	</section>
+</div>
+
+<form [formGroup]="demoForm" (ngSubmit)="onSubmit()">
+	<div class="row">
+		<div class="column">
+			<label for="start">Data început: </label>
+			<input id="start" #start tabindex="1" type="text" formControlName="start" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		
+			<label for="bases">Baza: </label>
+			<input id="bases" type="text" formControlName="bases">
+
+			<label for="serie">Serie: </label>
+			<input id="serie" #serie tabindex="4" type="text" formControlName="serie" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+	
+			<label for="prescriptionPlace">Loc prescriere: </label>
+			<input id="prescriptionPlace" #prescriptionPlace tabindex="7" type="text" formControlName="prescriptionPlace" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		</div>
+
+		<div class="column">
+			<label for="end">Data sfârșit: </label>
+			<input id="end" #end tabindex="2" type="text" formControlName="end" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+			
+			<label for="days">Zile: </label>
+			<input id="days" type="text" formControlName="days">
+
+			<label for="documentDate">Din data: </label>
+			<input id="documentDate" #documentDate tabindex="5" type="text" formControlName="documentDate" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+
+			<label for="documentNumber">Nr. aviz expert: </label>
+			<input id="documentNumber" #documentNumber tabindex="8" type="text" formControlName="documentNumber" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		</div>
+
+		<div class="column">
+			<label for="continueFrom">Continuare din: </label>
+			<input id="continueFrom" #continueFrom tabindex="3" type="text" formControlName="continueFrom" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+			
+			<label for="dailyAverage">Media zilnica: </label>
+			<input id="dailyAverage" type="text" formControlName="dailyAverage">
+
+			<label for="diagCode">Cod diagnostic: </label>
+			<input id="diagCode" #diagCode tabindex="6" type="text" formControlName="diagCode" (focus)="onFocusCapture($event)" (keydown.control)="onKeyDown($event)" (keyup.control)="onKeyUp($event)">
+		</div>
+
+	</div>
+ 
+  <button type="submit" tabindex="9">Submit</button>
+</form>
+
